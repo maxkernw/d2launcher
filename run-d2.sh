@@ -59,12 +59,31 @@ while true; do
   
   sleep 1
   ERR=`ps aux |grep "Blizzard Error" |grep -v grep |awk '{print $2}'`
+  STUCK=`top -l 1 | grep 'Diablo'`
   if [ "$ERR" != "" ]; then
     echo "looks like it crashed. killing error reporter and restarting"
     kill $ERR
     sleep 2
     sync
     TRY=$((TRY+1))
+  
+  elif [[ $STUCK = *"stuck"* ]] ; then
+  echo "Diablo II is stuck, killing Diablo II and restarting"
+    kill -9 $PID
+    sleep 2
+    sync
+    TRY=$((TRY+1))
+  
+  elif [[ $STUCK = *"sleeping"* ]] ; then
+  echo "Diablo II might be STUCK!, restarting"
+    kill -9 $PID
+    sleep 2
+    sync
+    TRY=$((TRY+1))
+    
+  elif [[ $STUCK = *"running"* ]] ; then
+  echo "Might have worked..."
+  exit
 
   else
     echo "Well, what do you know, it might have worked..."
